@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>we chat app</title>
+	<style>
+		body
+		{
+			background: #eeffee;
+		}
+
+		#container{
+			width:700px;
+			margin:0 auto;
+		}
+
+		#chatWindow{
+			max-height:800px;
+			min-height: 300px;
+			width: 450px;
+			border:solid 2px #000;
+			margin-bottom: 15px;
+			background: transparent;
+		}
+
+		#mainWrapper{
+			display:none;
+		}
+
+		#chatWrapper{
+			float:left;
+			border:2px #000 solid;
+			border-radius: 10px;
+			background:#eeffff;
+			padding:10px;
+		}
+
+		#userWrapper{
+			float:left;
+			border:2px #000 solid;
+			border-radius: 10px;
+			background:#eeffff;
+			padding:10px;
+			margin-left:20px;
+			width:170px;
+			min-height: 200px;
+			max-height: 800px;
+			text-align: center;
+			font-weight: bold;
+		}
+
+		#namesWrapper{
+			width: 350px;
+			float:left;
+			border:1px #000 solid;
+			border-radius: 10px;
+			background:#eeffff;
+			padding:10px;
+			margin-left:20px;
+		}
+
+		input
+		{
+			height:30px;
+			border:solid 1px #000;
+			width: 100%;
+			margin-bottom: 10px;
+		}
+		.error{
+			color: red;
+		}
+		a
+		{			
+			color: red;
+			font-size: 12px;
+			font-weight: bold;
+		}
+		p
+		{
+			margin: 0;
+			padding: 0;
+			font-weight: bold;
+			border:solid 2px #000;
+			border-color: #eeffff;
+			color: #000;
+			margin-bottom: 3px;
+		}
+		h2
+		{
+			margin: 0;
+			padding: 0;
+			font-weight: bold;
+			color: #000;
+			border:solid 2px #000;
+			border-color: #000;
+			margin-bottom: 20px;
+			text-align: center;
+		}
+		h3
+		{
+			text-align: center;
+			border:solid 2px #000;
+			border-color: #000;
+			margin-bottom: 10px;
+			font-weight: bold;
+
+		}
+
+
+	</style>
+</head>
+<body>
+	<div id="container">
+		<div id="namesWrapper">
+			<h2>we chat app</h2>
+			<div id="error"></div>
+			<div class="input-group">
+			<p>Email</p>
+			<form id="usernameForm">
+				<input type="email" name="email" value="">
+			<p>Create Username:</p>
+				<input type="text" size="35" id="username">	
+			<p>Create Password</p>		
+				<input type="Password" name="" placeholder="">
+			<input type="submit" value="Sign In">
+			</form>
+			</div>
+			Memper : <a href="?register=">forget password</a>
+		</div>
+
+		<div id="mainWrapper">
+			<h2>we chat app</h2>
+			<div id="chatWrapper">
+				<div id="chatWindow"></div>
+				<form id="messageForm">
+					<input type="text" size="35" id="message" placeholder="Say Something...">
+					<input type="submit" value="Submit">
+				</form>
+			</div>
+
+			<div id="userWrapper">
+				<h3>Online</h3>
+				<div id="users"></div>
+			</div>
+		</div>
+	</div>
+
+	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+		<script src="/socket.io/socket.io.js"></script>
+		<script>
+		$(function(){
+			var socket = io.connect();
+			var $messageForm = $('#messageForm');
+			var $message = $('#message');
+			var $chat = $('#chatWindow');
+			var $usernameForm = $('#usernameForm');
+			var $PasswordForm = $('PasswordForm');
+			var $users = $('#users');
+			var $username = $('#username');
+			var $error = $('#error');
+
+			$usernameForm.submit(function(e){
+				e.preventDefault();
+				socket.emit('new user', $username.val(), function(data){
+					if(data){
+						$('#namesWrapper').hide();
+						$('#mainWrapper').show();
+					} else{
+						$error.html('incorrect information');
+					}
+				});
+			});
+
+			socket.on('usernames', function(data){
+				var html = '';
+				for(i = 0;i < data.length;i++){
+					html += data[i] + '<br>';
+				}
+				$users.html(html);
+			});
+
+			$messageForm.submit(function(e){
+				e.preventDefault();
+				socket.emit('send message', $message.val());
+				$message.val('');
+			});
+
+			socket.on('new message', function(data){
+				$chat.append('<strong>'+data.user+'</strong>: '+data.msg+'<br>');
+			});
+
+		});
+		</script>
+</body>
+</html>

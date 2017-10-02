@@ -1,0 +1,22 @@
+
+when you try to use this simple app on local server
+follow this steps.
+
+1-for windows download Gitbash from:https://git-for-windows.github.io/
+
+2-after setup this app open my app folder then run the git app
+
+3-to run the server use this command : node server
+
+4-open your browser prefer chrome or firefox for http connection
+
+5-url : localhost:5813 .
+
+6-heroku url : 
+
+6-good luck for any information contact me.
+
+
+
+
+ 
